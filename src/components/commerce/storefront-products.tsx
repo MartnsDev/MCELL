@@ -17,7 +17,7 @@ export function StorefrontProduct({ product: p }: { product: Product }) {
   return <article className="storefront-product">
     <FavoriteButton id={p.id} />
     <Link className="storefront-product-image" href={`/produto/${p.slug}`}>
-      {p.images[0] ? <Image src={p.images[0]} alt={p.name} fill sizes="(max-width:600px) 40vw, 120px" /> : <Package size={45} />}
+      {p.images[0] ? <Image src={p.images[0]} alt={p.name} fill sizes="(max-width:640px) 45vw, (max-width:1000px) 15vw, 120px" /> : <Package size={45} />}
     </Link>
     <div className="storefront-product-copy"><Link href={`/produto/${p.slug}`}><h3>{p.name}</h3></Link><p>{p.compatibility || p.brand || p.product_type}</p>
       <small className="product-availability">{available.length ? "Disponível em estoque" : "Esgotado"}</small>

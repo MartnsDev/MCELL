@@ -1,10 +1,13 @@
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronRight, ShoppingCart, ClipboardList, BadgeDollarSign, Settings2, Package } from "lucide-react";
 import { catalog } from "@/lib/commerce/server";
 import { Benefits, BudgetLink, HeroBenefits } from "@/components/commerce/shell";
 import { StorefrontProduct } from "@/components/commerce/storefront-products";
 import { emptySettings } from "@/lib/commerce/types";
+const heroImageProps = { alt: "", fill: true, loading: "eager" as const, fetchPriority: "high" as const };
+const { props: desktopHero } = getImageProps({ ...heroImageProps, src: "/brand/hero-without-charger-mcell.webp", sizes: "(max-width:1500px) 100vw, 1500px" });
+const { props: mobileHero } = getImageProps({ ...heroImageProps, src: "/brand/hero-mobile-mcell.webp", sizes: "100vw" });
 const categoryTiles = [
   ["Capinhas", "capinhas"], ["Películas", "peliculas"], ["Cabos", "cabos"], ["Carregadores", "carregadores"],
   ["Fones", "fones"], ["Suportes", "suportes"], ["Smartwatch", "smartwatch"], ["Consertos", "consertos"],
@@ -20,7 +23,11 @@ export default async function Home() {
   const serviceText = s.service_text === "Conte o que aconteceu com seu aparelho. Acompanhe o diagnóstico e aprove o orçamento antes do reparo." ? emptySettings.service_text : s.service_text;
   return <main className="storefront-home">
     <section className="container reference-hero">
-      <Image className="reference-hero-background" src="/brand/hero-without-charger-mcell.webp" alt="" fill sizes="(max-width:1500px) 100vw, 1500px" preload />
+      <picture>
+        <source media="(max-width:640px)" srcSet={mobileHero.srcSet} sizes={mobileHero.sizes} />
+        {/* getImageProps provides Next.js optimized sources for this art-directed picture. */}
+        <img {...desktopHero} className="reference-hero-background" alt="" />
+      </picture>
       <div className="reference-hero-copy"><p className="hero-eyebrow">SEMPRE COM VOCÊ, EM TODOS OS MOMENTOS <span /></p>
         <h1>{title === emptySettings.hero_title ? <>Acessórios, eletrônicos e<br /><em>assistência técnica</em> em um<br />só lugar.</> : title}</h1>
         <p className="hero-description">{heroText}</p>
