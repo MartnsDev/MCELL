@@ -1,0 +1,28 @@
+-- Run after reseller_shops.sql in the isolated permissions harness.
+set role authenticated;
+select set_config('request.jwt.claim.sub', 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa', false);
+select public.test_assert((select featured_product_ids = '{}' from public.reseller_shops), 'existing shops use default order');
+update public.reseller_shops set featured_product_ids = array['arsenal-2026', 'real-madrid-branca-2025'], published = true;
+select public.test_assert((select featured_product_ids = array['arsenal-2026', 'real-madrid-branca-2025'] from public.reseller_shops), 'owner can save ordered highlights');
+select public.test_denied($test$update public.reseller_shops set featured_product_ids = array['gremio-2026', 'gremio-2026']$test$);
+select public.test_denied($test$update public.reseller_shops set featured_product_ids = array['unknown-product']$test$);
+select public.test_denied($test$update public.reseller_shops set featured_product_ids = array['gremio-2026', null]$test$);
+select public.test_denied($test$update public.reseller_shops set featured_product_ids = array[['gremio-2026'], ['arsenal-2026']]$test$);
+select public.test_denied($test$update public.reseller_shops set featured_product_ids = array['gremio-2026','arsenal-2026','milan-branca-2026','bayern-2026','juventus-2026','dortmund-2026','manchester-city-azul','juventus-branca-2026','juventus-azul-2026']$test$);
+select set_config('request.jwt.claim.sub', 'bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb', false);
+with changed as (update public.reseller_shops set featured_product_ids = array['gremio-2026'] where id = current_setting('test.shop_a')::uuid returning id) select public.test_assert(count(*) = 0, 'another account cannot change highlights') from changed;
+update public.reseller_shops set featured_product_ids = array['gremio-2026'];
+select public.test_assert((select featured_product_ids = array['gremio-2026'] from public.reseller_shops), 'second shop has independent highlights');
+set role anon;
+select set_config('request.jwt.claim.sub', '', false);
+select public.test_denied($test$update public.reseller_shops set featured_product_ids = '{}' $test$);
+select public.test_assert(public.read_reseller_shop(current_setting('test.slug_a'))->'featured_product_ids' = '["arsenal-2026","real-madrid-branca-2025"]'::jsonb, 'anonymous buyer receives owner order');
+select public.test_assert(not (public.read_reseller_shop(current_setting('test.slug_a')) ?| array['owner_id', 'contact_email', 'id']), 'highlights do not expose private account fields');
+set role authenticated;
+select set_config('request.jwt.claim.sub', 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa', false);
+update public.reseller_shops set featured_product_ids = array['real-madrid-branca-2025', 'arsenal-2026'];
+select public.test_assert(public.read_reseller_shop(current_setting('test.slug_a'))->'featured_product_ids' = '["real-madrid-branca-2025","arsenal-2026"]'::jsonb, 'new order persists');
+update public.reseller_shops set featured_product_ids = '{}';
+select public.test_assert(public.read_reseller_shop(current_setting('test.slug_a'))->'featured_product_ids' = '[]'::jsonb, 'owner can restore the default order');
+reset role;
+select 'All highlight ownership, ordering and validation checks passed.' as result;

@@ -1,0 +1,298 @@
+[
+  {
+    "category_name": "Cabos",
+    "category_slug": "cabos",
+    "confirmed_stock": 1,
+    "product": {
+      "id": "2d553734-c515-455e-94cc-a00eb740880c",
+      "category_id": "",
+      "name": "Cabo USB-C para Lightning Dotcell DC-CD4010",
+      "slug": "cabo-usb-c-para-lightning-dotcell-dc-cd4010",
+      "description": "Cabo Dotcell DC-CD4010, USB-C para Lightning, para carga e sincronização de aparelhos compatíveis.",
+      "brand": "Dotcell",
+      "product_type": "Cabo",
+      "compatibility": "Aparelhos com entrada Lightning; fonte com saída USB-C",
+      "specs": {
+        "Modelo": "DC-CD4010",
+        "Conectores": "USB-C / Lightning"
+      },
+      "images": [
+        "/produtos/cabo-usb-c-para-lightning-dotcell-dc-cd4010.webp"
+      ],
+      "featured": true,
+      "active": false,
+      "variants": [
+        {
+          "id": "cd5ff669-bf09-452c-b769-328b476903c1",
+          "label": "Modelo da foto",
+          "sku": "DC-CD4010",
+          "attributes": {},
+          "image": null,
+          "price_cents": 2490,
+          "promo_cents": null,
+          "stock": 1,
+          "active": true,
+          "weight_g": 0,
+          "height_cm": 0,
+          "width_cm": 0,
+          "length_cm": 0
+        }
+      ]
+    }
+  },
+  {
+    "category_name": "Carregadores",
+    "category_slug": "carregadores",
+    "confirmed_stock": 1,
+    "product": {
+      "id": "bdbeb12a-21ee-4d52-917f-9d1c2c2f5946",
+      "category_id": "",
+      "name": "Kit carregador turbo Lehmox LE-1 iOS",
+      "slug": "kit-carregador-turbo-lehmox-le-1-ios",
+      "description": "Kit Lehmox LE-1 iOS com carregador de tomada e cabo Lightning. A embalagem informa saída de 30 W; confirme a compatibilidade com seu aparelho.",
+      "brand": "Lehmox",
+      "product_type": "Kit carregador",
+      "compatibility": "Aparelhos com entrada Lightning",
+      "specs": {
+        "Modelo": "LE-1 iOS",
+        "Potência": "30 W (informação da embalagem)"
+      },
+      "images": [
+        "/produtos/kit-carregador-turbo-lehmox-le-1-ios.webp"
+      ],
+      "featured": true,
+      "active": false,
+      "variants": [
+        {
+          "id": "8cc62f03-b9a2-4d0c-9128-50569dc53d5b",
+          "label": "Modelo da foto",
+          "sku": "LE-1",
+          "attributes": {},
+          "image": null,
+          "price_cents": 2790,
+          "promo_cents": null,
+          "stock": 1,
+          "active": true,
+          "weight_g": 0,
+          "height_cm": 0,
+          "width_cm": 0,
+          "length_cm": 0
+        }
+      ]
+    }
+  },
+  {
+    "category_name": "Cabos",
+    "category_slug": "cabos",
+    "confirmed_stock": 1,
+    "product": {
+      "id": "08ce18dd-52d8-4297-a8c0-65887a9cf6e3",
+      "category_id": "",
+      "name": "Cabo USB-A para Lightning Lehmox LE-2010",
+      "slug": "cabo-usb-a-para-lightning-lehmox-le-2010",
+      "description": "Cabo de dados Lehmox LE-2010 iOS branco, USB-A para Lightning. A embalagem informa comprimento de 1 metro e corrente de 4,8 A.",
+      "brand": "Lehmox",
+      "product_type": "Cabo",
+      "compatibility": "Aparelhos com entrada Lightning",
+      "specs": {
+        "Modelo": "LE-2010 iOS",
+        "Comprimento": "1 m",
+        "Corrente": "4,8 A (informação da embalagem)",
+        "Cor": "Branco"
+      },
+      "images": [
+        "/produtos/cabo-usb-a-para-lightning-lehmox-le-2010.webp"
+      ],
+      "featured": true,
+      "active": false,
+      "variants": [
+        {
+          "id": "d60c3f9e-1569-43d3-89f4-9a39faccdab5",
+          "label": "Branco",
+          "sku": "LE-2010",
+          "attributes": {
+            "Cor": "Branco"
+          },
+          "image": null,
+          "price_cents": 1190,
+          "promo_cents": null,
+          "stock": 1,
+          "active": true,
+          "weight_g": 0,
+          "height_cm": 0,
+          "width_cm": 0,
+          "length_cm": 0
+        }
+      ]
+    }
+  },
+  {
+    "category_name": "Cabos",
+    "category_slug": "cabos",
+    "confirmed_stock": 4,
+    "product": {
+      "id": "e9166995-3879-4f96-b0a1-107cc9a4fc58",
+      "category_id": "",
+      "name": "Cabo USB-A para USB-C Lehmox LE-2012",
+      "slug": "cabo-usb-a-para-usb-c-lehmox-le-2012",
+      "description": "Cabo de dados Lehmox LE-2012 tipo C, USB-A para USB-C. A embalagem informa comprimento de 1 metro e corrente de 4,8 A.",
+      "brand": "Lehmox",
+      "product_type": "Cabo",
+      "compatibility": "Aparelhos com entrada USB-C",
+      "specs": {
+        "Modelo": "LE-2012 TC",
+        "Comprimento": "1 m",
+        "Corrente": "4,8 A (informação da embalagem)"
+      },
+      "images": [
+        "/produtos/cabo-usb-a-para-usb-c-lehmox-le-2012.webp"
+      ],
+      "featured": true,
+      "active": false,
+      "variants": [
+        {
+          "id": "849e4654-b281-4a2a-9d1f-e933be51a2b9",
+          "label": "Modelo da foto",
+          "sku": "LE-2012",
+          "attributes": {},
+          "image": null,
+          "price_cents": 1190,
+          "promo_cents": null,
+          "stock": 4,
+          "active": true,
+          "weight_g": 0,
+          "height_cm": 0,
+          "width_cm": 0,
+          "length_cm": 0
+        }
+      ]
+    }
+  },
+  {
+    "category_name": "Cabos",
+    "category_slug": "cabos",
+    "confirmed_stock": 6,
+    "product": {
+      "id": "8c427a6b-6c2a-4f3a-94b7-340d02d80baa",
+      "category_id": "",
+      "name": "Cabo USB-A para Lightning Lehmox LE-2013",
+      "slug": "cabo-usb-a-para-lightning-lehmox-le-2013",
+      "description": "Cabo de dados Lehmox LE-2013 iOS preto, USB-A para Lightning. A embalagem informa comprimento de 1 metro e corrente de 4,8 A.",
+      "brand": "Lehmox",
+      "product_type": "Cabo",
+      "compatibility": "Aparelhos com entrada Lightning",
+      "specs": {
+        "Modelo": "LE-2013 iOS",
+        "Comprimento": "1 m",
+        "Corrente": "4,8 A (informação da embalagem)",
+        "Cor": "Preto"
+      },
+      "images": [
+        "/produtos/cabo-usb-a-para-lightning-lehmox-le-2013.webp"
+      ],
+      "featured": true,
+      "active": false,
+      "variants": [
+        {
+          "id": "7e60ba6f-2d82-431a-8a26-1411ca1a15d5",
+          "label": "Preto",
+          "sku": "LE-2013",
+          "attributes": {
+            "Cor": "Preto"
+          },
+          "image": null,
+          "price_cents": 1190,
+          "promo_cents": null,
+          "stock": 6,
+          "active": true,
+          "weight_g": 0,
+          "height_cm": 0,
+          "width_cm": 0,
+          "length_cm": 0
+        }
+      ]
+    }
+  },
+  {
+    "category_name": "Fones",
+    "category_slug": "fones",
+    "confirmed_stock": 1,
+    "product": {
+      "id": "9fffb7bd-b967-4e61-80a1-1415e3b37f2c",
+      "category_id": "",
+      "name": "Fone Bluetooth Lehmox i11",
+      "slug": "fone-bluetooth-lehmox-i11",
+      "description": "Fone sem fios Lehmox i11. A embalagem informa Bluetooth 5.3.",
+      "brand": "Lehmox",
+      "product_type": "Fone Bluetooth",
+      "compatibility": "Aparelhos com conexão Bluetooth",
+      "specs": {
+        "Modelo": "i11",
+        "Bluetooth": "5.3 (informação da embalagem)"
+      },
+      "images": [
+        "/produtos/fone-bluetooth-lehmox-i11.webp"
+      ],
+      "featured": true,
+      "active": false,
+      "variants": [
+        {
+          "id": "0089343e-b49a-4de9-b091-271c5e16dc30",
+          "label": "Modelo da foto",
+          "sku": "I11",
+          "attributes": {},
+          "image": null,
+          "price_cents": 3290,
+          "promo_cents": null,
+          "stock": 1,
+          "active": true,
+          "weight_g": 0,
+          "height_cm": 0,
+          "width_cm": 0,
+          "length_cm": 0
+        }
+      ]
+    }
+  },
+  {
+    "category_name": "Fones",
+    "category_slug": "fones",
+    "confirmed_stock": 1,
+    "product": {
+      "id": "1f59e78a-34f7-4cfc-be32-b3acb098e69f",
+      "category_id": "",
+      "name": "Fone Bluetooth Lehmox i12",
+      "slug": "fone-bluetooth-lehmox-i12",
+      "description": "Fone sem fios Lehmox i12 com estojo. A embalagem informa Bluetooth 5.3.",
+      "brand": "Lehmox",
+      "product_type": "Fone Bluetooth",
+      "compatibility": "Aparelhos com conexão Bluetooth",
+      "specs": {
+        "Modelo": "i12",
+        "Bluetooth": "5.3 (informação da embalagem)"
+      },
+      "images": [
+        "/produtos/fone-bluetooth-lehmox-i12.webp"
+      ],
+      "featured": true,
+      "active": false,
+      "variants": [
+        {
+          "id": "028b268f-e108-4eab-bb69-8ce75858fc39",
+          "label": "Modelo da foto",
+          "sku": "I12",
+          "attributes": {},
+          "image": null,
+          "price_cents": 3290,
+          "promo_cents": null,
+          "stock": 1,
+          "active": true,
+          "weight_g": 0,
+          "height_cm": 0,
+          "width_cm": 0,
+          "length_cm": 0
+        }
+      ]
+    }
+  }
+]
