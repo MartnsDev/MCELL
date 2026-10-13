@@ -15,8 +15,8 @@ const categoryTiles = [
 export default async function Home() {
   const view = await catalog();
   const { products, settings: s } = view;
-  const best = products.filter(p => (p.sold_count ?? 0) > 0).sort((a, b) => (b.sold_count ?? 0) - (a.sold_count ?? 0)).slice(0, 5);
-  const selection = best.length && s.home_show_bestsellers ? best : s.home_show_featured ? products.filter(p => p.featured).slice(0, 5) : s.home_show_new ? products.slice(0, 5) : [];
+  const best = products.filter(p => (p.sold_count ?? 0) > 0).sort((a, b) => (b.sold_count ?? 0) - (a.sold_count ?? 0)).slice(0, 8);
+  const selection = best.length && s.home_show_bestsellers ? best : s.home_show_featured ? products.filter(p => p.featured).slice(0, 8) : s.home_show_new ? products.slice(0, 8) : [];
   const title = s.hero_title === "Tecnologia para o seu dia. Cuidado para o seu celular." ? emptySettings.hero_title : s.hero_title;
   const heroText = s.hero_text === "Acessórios, eletrônicos e assistência técnica em um só lugar." ? emptySettings.hero_text : s.hero_text;
   const serviceTitle = s.service_title === "Seu celular merece uma segunda chance." ? emptySettings.service_title : s.service_title;
@@ -42,7 +42,7 @@ export default async function Home() {
     })}</nav>}
     <section className="container reference-products-section">
       <div className="reference-section-heading"><div><h2>{best.length && s.home_show_bestsellers ? "Mais vendidos" : "Produtos em destaque"}</h2><p>{best.length && s.home_show_bestsellers ? "Os produtos que são sucesso entre os nossos clientes" : "Acessórios e eletrônicos para o seu dia a dia"}</p></div><Link href="/catalogo">Ver todos os produtos<ArrowRight size={16} /></Link></div>
-      <div className={`reference-products ${selection.length ? "" : "is-empty"}`}>{selection.map(p => <StorefrontProduct key={p.id} product={p} />)}{!selection.length && <div className="storefront-empty"><Package size={32} /><div><h3>{view.unavailable ? "Catálogo temporariamente indisponível" : "Novos produtos em breve"}</h3><p>{view.unavailable ? "Consulte o atendimento ou tente novamente em instantes." : "Estamos preparando o nosso catálogo para você."}</p></div></div>}<aside className="reference-budget-card"><BudgetLink /><p>Atendimento via WhatsApp<br />também disponível.</p></aside></div>
+      <div className={`reference-products ${selection.length ? "" : "is-empty"}`}>{selection.map(p => <StorefrontProduct key={p.id} product={p} />)}{!selection.length && <div className="storefront-empty"><Package size={32} /><div><h3>{view.unavailable ? "Catálogo temporariamente indisponível" : "Novos produtos em breve"}</h3><p>{view.unavailable ? "Consulte o atendimento ou tente novamente em instantes." : "Estamos preparando o nosso catálogo para você."}</p></div></div>}</div><aside className="reference-budget-card"><BudgetLink /><p>Atendimento via WhatsApp<br />também disponível.</p></aside>
     </section>
     {s.home_show_service && <section className="container reference-service">
       <div className="reference-service-photo"><Image src="/brand/repair-natural-mcell.webp" alt="Mãos de um técnico usando uma chave de precisão para consertar um celular em uma bancada" fill sizes="(max-width:700px) 100vw, 280px" /></div>

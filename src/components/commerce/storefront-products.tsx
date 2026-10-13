@@ -17,13 +17,13 @@ export function StorefrontProduct({ product: p }: { product: Product }) {
   return <article className="storefront-product">
     <FavoriteButton id={p.id} />
     <Link className="storefront-product-image" href={`/produto/${p.slug}`}>
-      {p.images[0] ? <Image src={p.images[0]} alt={p.name} fill sizes="(max-width:640px) 45vw, (max-width:1000px) 15vw, 120px" /> : <Package size={45} />}
+      {p.images[0] ? <Image src={p.images[0]} alt={p.name} fill sizes="(max-width:640px) 45vw, (max-width:1000px) 30vw, 300px" /> : <Package size={45} />}
     </Link>
     <div className="storefront-product-copy"><Link href={`/produto/${p.slug}`}><h3>{p.name}</h3></Link><p>{p.compatibility || p.brand || p.product_type}</p>
       <small className="product-availability">{available.length ? "Disponível em estoque" : "Esgotado"}</small>
       {pricedVariant?.promo_cents != null && <s className="reference-price">{money(pricedVariant.price_cents)}</s>}
       <strong className="storefront-price">{price ? money(price) : "Indisponível"}</strong>
-      <small>{variants.length > 1 ? "Escolha o modelo do seu aparelho" : "Consulte as condições no checkout"}</small>
+      <small>{variants.length > 1 ? "Escolha o modelo do seu aparelho" : p.catalog_only ? "Conheça os detalhes do produto" : "Consulte as condições no checkout"}</small>
       {p.catalog_only ? <Link className="button compact-cart" href={`/produto/${p.slug}`}>Ver produto</Link> : available.length === 1 && variants.length === 1 ? <button className="button compact-cart" onClick={() => { add(available[0].id, 1, available[0].stock); setAdded(true); }}><span>{added ? <Check size={13} /> : <ShoppingCart size={13} />}</span>{added ? "Adicionado ao carrinho" : "Adicionar ao carrinho"}</button> : <Link className="button compact-cart" href={`/produto/${p.slug}`}><ShoppingCart size={13} />{available.length ? "Adicionar ao carrinho" : "Ver produto"}</Link>}
       <span className="sr-only" role="status">{added ? `${p.name} adicionado ao carrinho` : ""}</span>
     </div>
