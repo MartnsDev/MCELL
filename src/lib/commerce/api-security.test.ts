@@ -121,3 +121,12 @@ describe("request and upload safety", () => {
     expect(r.status).toBe(401);
   });
 });
+
+
+describe("quick stock authorization", () => {
+  it("rejects anonymous stock mutations before accessing inventory", async () => {
+    mocks.user.mockResolvedValue({ data: { user: null }, error: null });
+    const response = await POST(new Request("https://shop.example/api/admin/stock", { method: "POST", body: "{}" }), { params: Promise.resolve({ resource: "stock" }) });
+    expect(response.status).toBe(401);
+  });
+});

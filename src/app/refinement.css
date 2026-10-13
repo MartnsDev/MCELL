@@ -168,3 +168,12 @@ body { background: #f7f9fc; }
 @media(prefers-reduced-motion:reduce) {
   .storefront-product,.reference-categories > a,.product-card { transition: none; }
 }
+.admin-pin-login { width: min(100%,460px); margin: 24px auto; padding: 32px; display: grid; gap: 18px; }
+.admin-pin-login h1 { font-size: 28px; }
+.admin-pin-login p { margin: 0; line-height: 1.6; }
+.admin-pin-login label { display: grid; gap: 8px; }
+.admin-pin-login input,.admin-pin-login button { min-height: 46px; }
+.stock-editor { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; margin-block: 10px; }
+.stock-editor label { display: grid; gap: 5px; font-size: 12px; }
+.stock-editor input { width: 110px; min-height: 44px; }
+.stock-editor button { min-height: 44px; font-size: 12px; }

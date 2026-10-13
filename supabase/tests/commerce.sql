@@ -7,6 +7,13 @@ select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000001'
 set local role authenticated;
 select public.mc_save_product('{"id":"00000000-0000-4000-8000-000000000010","category_id":null,"name":"Test cable","slug":"test-cable","description":"Test only","brand":"Test","product_type":"Cable","compatibility":"USB-C","specs":{},"images":[],"featured":true,"active":true,"variants":[{"id":"00000000-0000-4000-8000-000000000011","label":"USB-C","sku":"TEST-C","attributes":{},"image":null,"price_cents":1990,"promo_cents":null,"stock":2,"active":true,"weight_g":100,"height_cm":2,"width_cm":11,"length_cm":16,"cost_cents":500}]}');
 reset role;
+set local role authenticated;
+update public.mc_variants set stock=3 where id='00000000-0000-4000-8000-000000000011' and stock=2;
+select pg_temp.assert((select stock=3 from public.mc_variants where id='00000000-0000-4000-8000-000000000011'),'admin quick stock update');
+update public.mc_variants set stock=8 where id='00000000-0000-4000-8000-000000000011' and stock=2;
+select pg_temp.assert((select stock=3 from public.mc_variants where id='00000000-0000-4000-8000-000000000011'),'stale stock edit cannot overwrite newer stock');
+update public.mc_variants set stock=2 where id='00000000-0000-4000-8000-000000000011' and stock=3;
+reset role;
 update public.mc_products set category_id=(select id from public.mc_categories limit 1) where slug='test-cable';
 update public.mc_settings set pickup_enabled=true,pickup_address='TEST ADDRESS',pickup_hours='TEST HOURS',manual_payment=true,payment_enabled=true;
 select pg_temp.assert((public.mc_catalog()->'products'->0->'variants'->0->>'sku')='TEST-C','real catalog');
@@ -17,6 +24,10 @@ select pg_temp.assert(not has_function_privilege('authenticated','public.mc_crea
 select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000002',true);
 set local role authenticated;
 select pg_temp.assert((select count(*)=0 from public.mc_costs),'RLS hides costs from non-admin');
+update public.mc_variants set stock=999 where id='00000000-0000-4000-8000-000000000011';
+reset role;
+select pg_temp.assert((select stock=2 from public.mc_variants where id='00000000-0000-4000-8000-000000000011'),'non-admin cannot alter stock');
+set local role authenticated;
 do $$begin begin perform public.mc_save_product('{}');raise exception 'expected denial';exception when others then if sqlerrm='expected denial' then raise;end if;if sqlerrm<>'UNAUTHORIZED' then raise;end if;end;end$$;
 reset role;
 select public.mc_create_order('[{"variant_id":"00000000-0000-4000-8000-000000000011","quantity":1}]','{"name":"Test"}','pickup',null,null,'test','mercadopago','00000000-0000-4000-8000-000000000020','request','secret') as order_id \gset

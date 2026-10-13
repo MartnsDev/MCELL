@@ -65,6 +65,21 @@ async function read<T>(resource: string): Promise<T[]> {
   if (!r.ok) throw new Error(d.error);
   return d.data;
 }
+function StockEditor({ variant, productName, onSaved }: { variant: AdminVariant; productName: string; onSaved: () => Promise<void> }) {
+  const [quantity,setQuantity] = useState(String(variant.stock));
+  const [busy,setBusy] = useState(false);
+  const [message,setMessage] = useState("");
+  return <form className="stock-editor" onSubmit={async e=>{
+    e.preventDefault();setBusy(true);setMessage("");
+    try {await api("/api/admin/stock",{variant_id:variant.id,stock:Number(quantity),expected_stock:variant.stock});await onSaved();setMessage("Estoque salvo.");}
+    catch(error){setMessage((error as Error).message);}
+    finally{setBusy(false);}
+  }}>
+    <label>{variant.label || variant.sku}<input aria-label={`Estoque disponível de ${productName}, ${variant.label || variant.sku}`} type="number" min="0" max="1000000" step="1" required value={quantity} onChange={e=>setQuantity(e.target.value)} /></label>
+    <button className="secondary" disabled={busy || Number(quantity)===variant.stock}>{busy ? "Salvando…" : "Salvar estoque"}</button>
+    {message && <small role="status">{message}</small>}
+  </form>;
+}
 export function ProductAdmin() {
   const [products, setProducts] = useState<Draft[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -562,12 +577,13 @@ export function ProductAdmin() {
         </form>
       ) : (
         <div className="table-wrap panel">
+          <p>Atualize as unidades disponíveis de cada variação. Reservas de pedidos já estão descontadas. Para preços, fotos e descrição, use Editar.</p>
           <table>
             <thead>
               <tr>
                 <th>Produto</th>
                 <th>Variações</th>
-                <th>Estoque</th>
+                <th>Estoque disponível</th>
                 <th>Status</th>
                 <th>Ação</th>
               </tr>
@@ -581,7 +597,7 @@ export function ProductAdmin() {
                     {p.slug}
                   </td>
                   <td>{p.variants.length}</td>
-                  <td>{p.variants.reduce((n, v) => n + v.stock, 0)}</td>
+                  <td>{p.variants.map(v=><StockEditor key={`${v.id}:${v.stock}`} variant={v} productName={p.name} onSaved={load} />)}</td>
                   <td>{p.active ? "Publicado" : "Rascunho"}</td>
                   <td>
                     <button className="secondary" onClick={() => edit(p)}>

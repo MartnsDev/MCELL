@@ -227,3 +227,9 @@ export const repairPatchSchema = z
     public: z.boolean(),
   })
   .strict();
+
+export const stockPatchSchema = z.object({
+  variant_id: uuid,
+  stock: z.number().int().min(0).max(1000000),
+  expected_stock: z.number().int().min(0).max(1000000),
+}).strict();

@@ -140,3 +140,7 @@ As mudanças estão no workspace, sem commit ou deploy. A migração não foi ap
 A identidade visual baseada na referência, os arquivos de imagem e as licenças das fontes estão documentados em [docs/identidade-visual.md](docs/identidade-visual.md).
 
 O repositório público contém `data/catalog/products.json`, uma cópia somente dos dados de venda e estoque para exibir os produtos enquanto o banco não estiver configurado. Custos de compra, arquivos de contas e importações privadas ficam fora do Git. Consulte [docs/catalogo-publico.md](docs/catalogo-publico.md).
+
+## Administração manual
+
+O responsável acessa `/adm/1031825277` para editar produtos e estoque com senha. A ativação depende das variáveis privadas e da conta administradora do Supabase exclusivo da M’Cell; consulte [a configuração do painel](docs/administracao-manual.md).

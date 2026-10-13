@@ -15,6 +15,7 @@ import {
   repairPatchSchema,
   serviceSchema,
   settingsSchema,
+  stockPatchSchema,
   uuid,
 } from "@/lib/commerce/validation";
 import { safeImage } from "@/lib/commerce/uploads";
@@ -36,7 +37,14 @@ export async function GET(
     const client = await requireAdmin();
     const { resource } = await params;
     if (resource === "product-imports") {
-      const prepared = JSON.parse(await readFile(path.join(process.cwd(), "data/imports/products.json"), "utf8"));
+      const source = await readFile(path.join(process.cwd(), "data/imports/products.json"), "utf8")
+        .catch(() => readFile(path.join(process.cwd(), "data/catalog/products.json"), "utf8"));
+      const records = JSON.parse(source);
+      const prepared = records.map((record: { pending?: string[]; product: { variants: Record<string, unknown>[] } }) => ({
+        ...record,
+        pending: record.pending ?? ["Confirmar custo e medidas para entrega antes de publicar"],
+        product: { ...record.product, variants: record.product.variants.map(variant => ({ ...variant, cost_cents: variant.cost_cents ?? 0 })) },
+      }));
       return Response.json({ data: prepared }, { headers: { "Cache-Control": "no-store" } });
     }
     const table = tables[resource];
@@ -91,6 +99,16 @@ export async function POST(
     await guard(request, "admin", 100);
     const { resource } = await params;
     const raw = await body(request);
+    if (resource === "stock") {
+      const patch = stockPatchSchema.parse(raw);
+      // Atomic compare-and-set; an intervening sale/edit must be reviewed.
+      // PostgreSQL row locks serialize this with purchase reservations.
+      const result = await client.from("mc_variants").update({ stock: patch.stock })
+        .eq("id", patch.variant_id).eq("stock", patch.expected_stock).select("id").maybeSingle();
+      check(result.error);
+      if (!result.data) throw new StoreError("O estoque mudou desde que a página foi aberta. Atualize e confira a quantidade antes de salvar novamente.", 409);
+      return Response.json({ id: result.data.id }, { headers: { "Cache-Control": "no-store" } });
+    }
     if (resource === "products") {
       const p = productSchema.parse(raw);
       const result = await client.rpc("mc_save_product", { p });

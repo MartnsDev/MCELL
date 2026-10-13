@@ -38,6 +38,8 @@ export const config = {
     "/entrar",
     "/conta",
     "/admin/:path*",
+    "/adm/:path*",
+    "/api/adm/:path*",
     "/api/admin/:path*",
     "/auth/:path*",
   ],
