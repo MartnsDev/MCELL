@@ -17,6 +17,20 @@ reset role;
 update public.mc_products set category_id=(select id from public.mc_categories limit 1) where slug='test-cable';
 update public.mc_settings set pickup_enabled=true,pickup_address='TEST ADDRESS',pickup_hours='TEST HOURS',manual_payment=true,payment_enabled=true;
 select pg_temp.assert((public.mc_catalog()->'products'->0->'variants'->0->>'sku')='TEST-C','real catalog');
+-- Inventory can be recorded without guessed dimensions, but orders cannot.
+update public.mc_variants set weight_g=0 where id='00000000-0000-4000-8000-000000000011';
+do $$begin
+ begin
+  perform public.mc_create_order('[{"variant_id":"00000000-0000-4000-8000-000000000011","quantity":1}]','{}','pickup',null,null,'manual-test','manual',gen_random_uuid(),'measurements-test','private');
+  raise exception 'expected measurement denial';
+ exception when others then
+  if sqlerrm<>'MEASUREMENTS_REQUIRED' then raise;end if;
+ end;
+end$$;
+select pg_temp.assert((select stock=2 from public.mc_variants where id='00000000-0000-4000-8000-000000000011'),'rejected unmeasured order rolls back stock reservation');
+select pg_temp.assert((select count(*)=0 from public.mc_orders),'rejected unmeasured order leaves no order');
+update public.mc_variants set weight_g=100 where id='00000000-0000-4000-8000-000000000011';
+
 select pg_temp.assert(not ((public.mc_catalog()->'products'->0->'variants'->0) ? 'cost_cents'),'cost not public');
 select pg_temp.assert(not has_table_privilege('anon','public.mc_costs','select'),'anonymous no cost access');
 select pg_temp.assert(not has_table_privilege('authenticated','public.mc_repairs','update'),'client cannot mutate repairs');

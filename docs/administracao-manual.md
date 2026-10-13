@@ -4,7 +4,7 @@ Acesso: `/adm/1031825277`. Senha definida somente em `MCELL_ADMIN_PIN`, variáve
 
 O painel permite editar os produtos existentes, preço, estoque por variação, descrição, imagens, categorias e destaques. “Salvar estoque” modifica apenas a quantidade disponível, sem reenviar preço, custo ou identidade do produto. Se a quantidade mudou por uma venda ou edição simultânea, o servidor retorna conflito e solicita nova conferência. O histórico de auditoria existente registra a alteração.
 
-Os sete cadastros já preparados podem ser abertos por “Carregar os cadastros preparados”, inclusive no deploy que contém apenas a cópia pública do catálogo. Confirme categoria, medidas de entrega e custo antes de salvar; os IDs existentes são preservados. Custos não presentes na cópia pública precisam ser preenchidos pelo responsável.
+Os sete cadastros já preparados podem ser abertos por “Carregar os cadastros preparados”, inclusive no deploy que contém apenas a cópia pública do catálogo. Confirme categoria e custo ao salvar; medidas ainda desconhecidas podem permanecer em zero e mantêm o produto apenas para consulta. Os IDs existentes são preservados. Custos não presentes na cópia pública precisam ser preenchidos pelo responsável.
 
 ## Ativar em produção
 
@@ -15,10 +15,14 @@ No projeto **mcell**, em Vercel → Settings → Environment Variables → Produ
 - `MCELL_ADMIN_PIN`: a senha escolhida pelo responsável.
 - `MCELL_ADMIN_USER_ID`: UUID da conta do responsável, já cadastrada em Authentication e em `public.admin_users`.
 
-No banco exclusivo da M’Cell, aplique as migrações históricas até 0013 se ainda estiverem pendentes. Esta alteração não cria nova migração. Não usar o banco/projeto/domínios da GM. O código não cria contas, concede privilégios nem altera dados remotamente durante o deploy.
+No banco exclusivo da M’Cell, aplique as migrações históricas até 0013 e a nova migração incremental 0014. Ela permite registrar medidas desconhecidas como zero, mantendo o estoque editável e impedindo pedidos desses produtos até a confirmação das medidas. Nenhuma medida de entrega é inventada. Não usar o banco/projeto/domínios da GM. O código não cria contas, concede privilégios nem altera dados remotamente durante o deploy.
 
 Se ainda não existir um responsável, crie a conta no painel Authentication do Supabase. Registre o UUID confirmado em `public.admin_users` pela ferramenta administrativa do próprio Supabase. Faça um novo deploy após configurar as variáveis.
 
 O PIN é comparado no servidor com digest de tamanho fixo. Há limites persistidos no banco, incluindo dez tentativas globais a cada dez minutos. Após validar senha e vínculo do responsável, o servidor gera e verifica um token interno do Supabase para a conta configurada; não envia e-mail nem devolve tokens/links ao navegador. Toda leitura/escrita continua exigindo `getUser`, `is_admin` e RLS como antes. Uma falha na configuração mantém o acesso fechado.
 
 Referências: [generateLink](https://supabase.com/docs/reference/javascript/auth-admin-generatelink), [verifyOtp](https://supabase.com/docs/reference/javascript/auth-verifyotp).
+
+## Extensão pgcrypto em um banco novo
+
+No Supabase, `gen_random_bytes` pode estar em `extensions`. Se a CLI não incluir esse schema na sessão e a migração 0013 falhar, execute a cópia integral do arquivo numa sessão com `set search_path = public, extensions;`. Depois de confirmar a instalação completa, registre 0013 como aplicada com `supabase migration repair 0013 --status applied`. Não altere a migração histórica nem marque como aplicada uma execução que falhou.

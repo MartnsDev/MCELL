@@ -242,3 +242,10 @@ describe("payments", () => {
     ).toBe(false);
   });
 });
+
+
+describe("manual inventory without shipping measurements",()=>{
+ it("rejects a shipping quote rather than substituting packaging for an unknown product weight",()=>{
+  expect(()=>parcel([{quantity:1,unit_cents:100,variant:{...v,weight_g:0}}],emptySettings)).toThrow("medidas de entrega");
+ });
+});

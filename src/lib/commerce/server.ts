@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
+import { hasShippingMeasurements } from "./measurements";
 import { preparedCatalog } from "./prepared-catalog";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { createServerClient } from "@supabase/ssr";
@@ -78,7 +79,8 @@ export const catalog = cache(async (): Promise<Catalog> => {
     const { data, error } = await client.rpc("mc_catalog");
     if (error?.code === "PGRST202") return preparedView();
     if (error || !data) throw new Error();
-    return data as Catalog;
+    const view = data as Catalog;
+    return { ...view, products: view.products.map(p => ({ ...p, catalog_only: p.catalog_only || p.variants.some(v => v.active && !hasShippingMeasurements(v)) })) };
   } catch {
     return {
       products: [],

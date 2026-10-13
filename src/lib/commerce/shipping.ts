@@ -1,4 +1,5 @@
 import type { Settings } from "./types";
+import { hasShippingMeasurements } from "./measurements";
 import { cep } from "./validation";
 import { StoreError } from "./server";
 export type ShippingItem = {
@@ -29,6 +30,8 @@ export interface ShippingProvider {
   >;
 }
 export function parcel(items: ShippingItem[], s: Settings) {
+  if (items.some(item => !hasShippingMeasurements(item.variant)))
+    throw new StoreError("As medidas de entrega deste produto ainda precisam ser confirmadas. Fale com o atendimento.", 422);
   // Conservative single box: stack items vertically and add configured packaging.
   const weight =
     items.reduce(

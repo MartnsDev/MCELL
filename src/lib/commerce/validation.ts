@@ -111,10 +111,10 @@ export const variantSchema = z
     promo_cents: cents.nullable().default(null),
     stock: z.number().int().min(0).max(1000000),
     active: z.boolean(),
-    weight_g: z.number().int().min(1).max(30000),
-    height_cm: z.number().int().min(1).max(100),
-    width_cm: z.number().int().min(1).max(100),
-    length_cm: z.number().int().min(1).max(100),
+    weight_g: z.number().int().min(0).max(30000),
+    height_cm: z.number().int().min(0).max(100),
+    width_cm: z.number().int().min(0).max(100),
+    length_cm: z.number().int().min(0).max(100),
     cost_cents: cents.default(0),
   })
   .strict()

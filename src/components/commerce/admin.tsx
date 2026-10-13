@@ -31,10 +31,10 @@ const blankVariant = (): AdminVariant => ({
   promo_cents: null,
   stock: 0,
   active: true,
-  weight_g: 100,
-  height_cm: 2,
-  width_cm: 11,
-  length_cm: 16,
+  weight_g: 0,
+  height_cm: 0,
+  width_cm: 0,
+  length_cm: 0,
   cost_cents: 0,
 });
 const blankProduct = (): Draft => ({
@@ -467,7 +467,7 @@ export function ProductAdmin() {
                     <input
                       required
                       type="number"
-                      min={k === "stock" ? 0 : 1}
+                      min={0}
                       step="1"
                       value={v[k]}
                       onChange={(e) => variant(i, k, Number(e.target.value))}
@@ -540,6 +540,7 @@ export function ProductAdmin() {
               </button>
             </section>
           ))}
+          <p className="notice">Medidas ainda desconhecidas podem ficar em zero. O produto pode aparecer no catálogo e ter o estoque atualizado; a compra online só é liberada depois de confirmar peso e medidas de todas as variações ativas.</p>
           <button
             type="button"
             className="secondary"
