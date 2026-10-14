@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { CardCartActions } from "./card-cart-actions";
 import { FavoriteButton } from "./favorite-button";
 import Link from "next/link";
 import { ArrowUpRight, Package } from "lucide-react";
@@ -43,6 +44,7 @@ export function ProductCard({ product: p }: { product: Product }) {
           </small>
         </div>
       </Link>
+      <CardCartActions product={p} />
     </article>
   );
 }
