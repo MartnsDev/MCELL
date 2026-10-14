@@ -1,10 +1,11 @@
-import { beforeEach, describe, it, expect, vi } from "vitest";
-const mocks = vi.hoisted(() => ({ user: vi.fn(), rpc: vi.fn() }));
+import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
+const mocks = vi.hoisted(() => ({ user: vi.fn(), rpc: vi.fn(), cookie: vi.fn(), stamp: vi.fn() }));
+vi.mock("@supabase/supabase-js",()=>({createClient:()=>({from:()=>({select:()=>({eq:()=>({eq:()=>({gt:()=>({maybeSingle:mocks.stamp})})})})})})}));
 vi.mock("@supabase/ssr", () => ({
   createServerClient: () => ({ auth: { getUser: mocks.user }, rpc: mocks.rpc }),
 }));
 vi.mock("next/headers", () => ({
-  cookies: async () => ({ getAll: () => [], set: vi.fn() }),
+  cookies: async () => ({ getAll: () => [], get:mocks.cookie, set: vi.fn() }),
 }));
 vi.mock("@/lib/supabase-config", () => ({
   getSupabaseConfig: () => ({
@@ -15,7 +16,8 @@ vi.mock("@/lib/supabase-config", () => ({
 import { GET, POST, PUT } from "@/app/api/admin/[resource]/route";
 import { POST as webhook } from "@/app/api/payments/webhook/route";
 import { POST as expire } from "@/app/api/cron/expire/route";
-import { body, StoreError } from "./server";
+import { issueAdminSession } from "./admin-session";
+import { body, requireAdmin, StoreError } from "./server";
 import { safeImage } from "./uploads";
 import sharp from "sharp";
 const context = { params: Promise.resolve({ resource: "products" }) };
@@ -136,4 +138,20 @@ it("reads bounded URL-encoded admin login bodies only when explicitly enabled", 
   const request = () => new Request("https://shop.example/login", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "pin=test-only" });
   await expect(body(request(), true)).resolves.toEqual({ pin: "test-only" });
   await expect(body(request())).rejects.toThrow("JSON inválido");
+});
+
+
+describe("PIN proof required for administrative access",()=>{
+ beforeEach(()=>{
+  vi.stubEnv("MCELL_ADMIN_SESSION_SECRET","test-secret-longer-than-thirty-two-characters");vi.stubEnv("MCELL_ADMIN_PIN","test-only-password");vi.stubEnv("MCELL_ADMIN_USER_ID","owner");vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY","test-server-key");
+  mocks.user.mockResolvedValue({data:{user:{id:"owner"}},error:null});mocks.rpc.mockResolvedValue({data:true,error:null});mocks.cookie.mockReturnValue(undefined);mocks.stamp.mockResolvedValue({data:{nonce_hash:"present"},error:null});
+ });
+ afterEach(()=>vi.unstubAllEnvs());
+ it.each(["products","categories","orders","repairs","settings","audit","product-imports"])("denies a Supabase admin without the PIN cookie for %s",async resource=>{
+  const r=await GET(new Request(`https://shop.example/api/admin/${resource}`),{params:Promise.resolve({resource})});expect(r.status).toBe(401);
+ });
+ it("rejects a forged proof cookie",async()=>{mocks.cookie.mockReturnValue({value:"forged"});await expect(requireAdmin()).rejects.toMatchObject({status:401});});
+ it("rejects a signed but revoked proof",async()=>{mocks.cookie.mockReturnValue({value:issueAdminSession("owner").token});mocks.stamp.mockResolvedValue({data:null,error:null});await expect(requireAdmin()).rejects.toMatchObject({status:401});});
+ it("fails closed if the proof lookup is unavailable",async()=>{mocks.cookie.mockReturnValue({value:issueAdminSession("owner").token});mocks.stamp.mockResolvedValue({data:null,error:{message:"offline"}});await expect(requireAdmin()).rejects.toMatchObject({status:401});});
+ it("accepts only a valid unexpired proof that is still registered",async()=>{mocks.cookie.mockReturnValue({value:issueAdminSession("owner").token});await expect(requireAdmin()).resolves.toBeTruthy();});
 });

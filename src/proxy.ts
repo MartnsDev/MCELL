@@ -13,7 +13,10 @@ export async function proxy(request: NextRequest) {
   }
   let response = NextResponse.next({ request });
   const config = getSupabaseConfig();
-  if (!config) return response;
+  if (!config) {
+    response.headers.set("Cache-Control", "private, no-store");
+    return response;
+  }
   const client = createServerClient(config.url, config.key, {
     cookies: {
       getAll: () => request.cookies.getAll(),
@@ -30,6 +33,8 @@ export async function proxy(request: NextRequest) {
     await client.auth.getUser();
   } catch {}
   response.headers.set("Cache-Control", "private, no-store");
+  if (/^\/(adm|admin|api\/adm|api\/admin)(\/|$)/.test(request.nextUrl.pathname))
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
   return response;
 }
 export const config = {

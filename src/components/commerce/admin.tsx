@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { Package, Search, Plus, ArrowLeft, ImagePlus, Boxes, CheckCircle2, AlertCircle } from "lucide-react";
 import { api } from "./api";
 import {
   money,
@@ -82,6 +83,8 @@ function StockEditor({ variant, productName, onSaved }: { variant: AdminVariant;
 }
 export function ProductAdmin() {
   const [products, setProducts] = useState<Draft[]>([]);
+  const [query, setQuery] = useState("");
+  const [selectedImage, setSelectedImage] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [imports, setImports] = useState<{ category_name: string; category_slug: string; pending: string[]; product: Draft }[]>([]);
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -116,6 +119,7 @@ export function ProductAdmin() {
     };
   }, []);
   function edit(p: Draft) {
+    setSelectedImage(p.images[0] ?? "");
     setDraft({
       ...p,
       variants: p.variants.map((v) => ({
@@ -188,18 +192,29 @@ export function ProductAdmin() {
           }
         : p,
     );
+  const filteredProducts = products.filter(p => `${p.name} ${p.brand} ${p.variants.map(v=>v.sku).join(" ")}`.toLocaleLowerCase("pt-BR").includes(query.toLocaleLowerCase("pt-BR")));
+  const mainImage = draft?.images.includes(selectedImage) ? selectedImage : draft?.images[0];
   return (
     <>
-      <div className="section-heading">
-        <h1>Produtos</h1>
-        <button onClick={() => setDraft(blankProduct())}>
+      <div className="section-heading admin-page-heading">
+        <div><p className="eyebrow">SEU CATÁLOGO, DO SEU JEITO</p><h1>Produtos</h1><p>Organize as fotos, acompanhe o estoque e mantenha sua loja atualizada.</p></div>
+        <button onClick={() => { setDraft(blankProduct()); setSelectedImage(""); }}><Plus size={18} />
           Cadastrar produto
         </button>
       </div>
       <p role="status" className={message ? "notice" : ""}>
         {message}
       </p>
-      {!draft && <div className="panel subsection">
+      {!draft && <>
+        <div className="admin-stats">
+          <div><Package /><span>Produtos cadastrados<strong>{products.length}</strong></span></div>
+          <div><Boxes /><span>Unidades disponíveis<strong>{products.reduce((n,p)=>n+p.variants.reduce((m,v)=>m+v.stock,0),0)}</strong></span></div>
+          <div><CheckCircle2 /><span>Produtos publicados<strong>{products.filter(p=>p.active).length}</strong></span></div>
+          <div><AlertCircle /><span>Com estoque até 2 un.<strong>{products.filter(p=>p.variants.reduce((n,v)=>n+v.stock,0)<=2).length}</strong></span></div>
+        </div>
+        <div className="admin-search"><Search size={19} /><input type="search" aria-label="Buscar no painel" placeholder="Buscar produto, marca ou SKU…" value={query} onChange={e=>setQuery(e.target.value)} /><span>{filteredProducts.length} produto(s)</span></div>
+      </>}
+      {!draft && <details className="panel admin-imports"><summary>Importar cadastros preparados</summary>
         <h2>Produtos preparados das fotos</h2>
         <p>Revise estoque, categoria e medidas antes de salvar. O custo é privado; descontos usam apenas o preço normal confirmado.</p>
         <button className="secondary" onClick={async () => {
@@ -216,9 +231,16 @@ export function ProductAdmin() {
             setMessage("Cadastro preparado. Confirme estoque, categoria e medidas antes de salvar e ativar.");
           }}>Revisar cadastro</button>
         </div>)}
-      </div>}
+      </details>}
       {draft ? (
-        <form className="panel" onSubmit={save}>
+        <form className="panel admin-editor" onSubmit={save}>
+          <div className="admin-editor-heading"><button type="button" className="secondary" onClick={()=>setDraft(null)}><ArrowLeft size={17} /> Voltar aos produtos</button><span>{draft.active ? "Publicado na loja" : "Rascunho"}</span></div>
+          <div className="admin-edit-layout"><aside className="admin-editor-preview">
+            <div className="admin-main-photo">{mainImage ? <Image src={mainImage} alt={`Prévia de ${draft.name || "produto"}`} fill sizes="(max-width:800px) 90vw, 400px" /> : <div><ImagePlus size={42} /><p>Adicione uma foto ao produto</p></div>}</div>
+            <p className="eyebrow">PRÉVIA DO PRODUTO</p><h2>{draft.name || "Seu novo produto"}</h2><p>{draft.brand}</p>
+            <strong className="admin-preview-price">{draft.variants.length ? money(Math.min(...draft.variants.map(v=>v.promo_cents??v.price_cents))) : ""}</strong>
+            <p className="admin-image-tip">Selecione uma miniatura abaixo para conferir a imagem em tamanho maior. A primeira imagem é a capa da loja.</p>
+          </aside><div className="admin-editor-fields">
           <h2>{draft.id ? "Editar produto" : "Novo produto"}</h2>
           <div className="form-grid subsection">
             <label>
@@ -359,13 +381,8 @@ export function ProductAdmin() {
           </div>
           <div className="upload-preview">
             {draft.images.map((img, i) => (
-              <div key={img}>
-                <Image
-                  src={img}
-                  alt={`Imagem ${i + 1}`}
-                  width={90}
-                  height={90}
-                />
+              <div key={img} className={mainImage===img ? "is-selected" : ""}>
+                <button type="button" className="admin-thumbnail" aria-label={`Ampliar imagem ${i + 1}`} aria-pressed={mainImage===img} onClick={()=>setSelectedImage(img)}><Image src={img} alt={`Imagem ${i + 1} de ${draft.name}`} width={160} height={160} /></button>
                 <small>{i === 0 ? "Principal" : ""}</small>
                 <button
                   type="button"
@@ -575,40 +592,18 @@ export function ProductAdmin() {
               Cancelar
             </button>
           </div>
+          </div></div>
         </form>
       ) : (
-        <div className="table-wrap panel">
+        <div className="admin-product-list">
           <p>Atualize as unidades disponíveis de cada variação. Reservas de pedidos já estão descontadas. Para preços, fotos e descrição, use Editar.</p>
-          <table>
-            <thead>
-              <tr>
-                <th>Produto</th>
-                <th>Variações</th>
-                <th>Estoque disponível</th>
-                <th>Status</th>
-                <th>Ação</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((p) => (
-                <tr key={p.id}>
-                  <td>
-                    {p.name}
-                    <br />
-                    {p.slug}
-                  </td>
-                  <td>{p.variants.length}</td>
-                  <td>{p.variants.map(v=><StockEditor key={`${v.id}:${v.stock}`} variant={v} productName={p.name} onSaved={load} />)}</td>
-                  <td>{p.active ? "Publicado" : "Rascunho"}</td>
-                  <td>
-                    <button className="secondary" onClick={() => edit(p)}>
-                      Editar
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="admin-product-grid">{filteredProducts.map(p => <article className="admin-product-card" key={p.id}>
+            <div className="admin-card-photo">{p.images[0] ? <Image src={p.images[0]} alt={p.name} fill sizes="(max-width:640px) 90vw, (max-width:1100px) 40vw, 320px" /> : <Package size={42} />}<span className={`admin-status ${p.active ? "published" : ""}`}>{p.active ? "Publicado" : "Rascunho"}</span></div>
+            <div className="admin-card-copy"><small>{p.brand || "Produto"} · {p.variants.length} variação(ões)</small><h2>{p.name}</h2><strong className="admin-card-price">{p.variants.length ? money(Math.min(...p.variants.map(v=>v.promo_cents??v.price_cents))) : "Sem preço"}</strong>
+            <div className="admin-card-stock"><h3>Estoque disponível</h3>{p.variants.map(v=><StockEditor key={`${v.id}:${v.stock}`} variant={v} productName={p.name} onSaved={load} />)}</div>
+            <button className="admin-edit-button" aria-label={`Editar ${p.name}`} onClick={()=>edit(p)}>Editar produto <ArrowLeft size={16} /></button></div>
+          </article>)}</div>
+          {products.length>0 && !filteredProducts.length && <div className="panel">Nenhum produto corresponde à busca.</div>}
           {!products.length && (
             <p>Nenhum produto cadastrado. Comece pelo primeiro produto.</p>
           )}

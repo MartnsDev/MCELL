@@ -1,4 +1,6 @@
-import { body, failure, guard, hash, sessionClient, StoreError } from "@/lib/commerce/server";
+import { cookies } from "next/headers";
+import { adminCookieName, adminCookieOptions, issueAdminSession, readAdminSession, sessionHash } from "@/lib/commerce/admin-session";
+import { body, database, failure, guard, hash, sessionClient, StoreError } from "@/lib/commerce/server";
 import { validAdminPin } from "@/lib/commerce/admin-pin";
 
 export async function POST(request: Request) {
@@ -11,12 +13,20 @@ export async function POST(request: Request) {
       throw new StoreError("Origem inválida.", 403);
     const raw = await body(request, true);
     if (raw.action === "logout") {
+      const store = await cookies();
+      const proof = readAdminSession(store.get(adminCookieName())?.value, process.env.MCELL_ADMIN_USER_ID ?? "");
+      if (proof) {
+        const removed = await database().from("mc_admin_pin_sessions").delete()
+          .eq("nonce_hash", sessionHash(proof.nonce)).eq("user_id", proof.sub);
+        if (removed.error) throw new StoreError("Não foi possível encerrar a sessão. Tente novamente.", 503);
+      }
+      store.set(adminCookieName(), "", { ...adminCookieOptions(), maxAge: 0 });
       const client = await sessionClient();
       const result = await client.auth.signOut({ scope: "local" });
       if (result.error) throw new StoreError("Não foi possível encerrar a sessão.", 503);
       return success();
     }
-    if (!process.env.MCELL_ADMIN_PIN || !process.env.MCELL_ADMIN_USER_ID)
+    if (!process.env.MCELL_ADMIN_PIN || !process.env.MCELL_ADMIN_USER_ID || (process.env.MCELL_ADMIN_SESSION_SECRET?.length ?? 0) < 32)
       throw new StoreError("O acesso administrativo precisa ser ativado na configuração da loja.", 503);
     const db = await guard(request, "admin-pin", 1);
     const globalLimit = await db.rpc("mc_limit", { p_key: hash("admin-pin-global"), p_max: 10, p_seconds: 600 });
@@ -44,8 +54,14 @@ export async function POST(request: Request) {
       await client.auth.signOut({ scope: "local" });
       throw new StoreError("Acesso não autorizado.", 403);
     }
-    // Tokens stay in the existing Supabase cookie session. All admin APIs still
-    // require getUser + is_admin and execute mutations as the authenticated owner.
+    const session = issueAdminSession(ownerId);
+    const persisted = await db.from("mc_admin_pin_sessions").insert({ nonce_hash: session.nonceHash, user_id: ownerId, expires_at: new Date(session.proof.exp * 1000).toISOString() });
+    if (persisted.error) {
+      await client.auth.signOut({ scope: "local" });
+      throw new StoreError("Não foi possível proteger a sessão. Tente novamente.", 503);
+    }
+    const store = await cookies();
+    store.set(adminCookieName(), session.token, adminCookieOptions());
     return success();
   } catch (error) {
     if (nativeForm) {

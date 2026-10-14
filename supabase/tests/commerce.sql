@@ -1,4 +1,5 @@
 begin;
+select has_table_privilege('anon','public.mc_admin_pin_sessions','select') as anon_pin_session_access;
 create function pg_temp.assert(ok boolean,msg text) returns void language plpgsql as $$begin if not coalesce(ok,false) then raise exception 'ASSERT: %',msg; end if;end$$;
 grant execute on function pg_temp.assert(boolean,text) to authenticated;
 insert into auth.users(id) values('00000000-0000-4000-8000-000000000001'),('00000000-0000-4000-8000-000000000002');
@@ -33,6 +34,9 @@ update public.mc_variants set weight_g=100 where id='00000000-0000-4000-8000-000
 
 select pg_temp.assert(not ((public.mc_catalog()->'products'->0->'variants'->0) ? 'cost_cents'),'cost not public');
 select pg_temp.assert(not has_table_privilege('anon','public.mc_costs','select'),'anonymous no cost access');
+select pg_temp.assert(not has_table_privilege('anon','public.mc_admin_pin_sessions','select'),'anonymous cannot enumerate PIN sessions');
+select pg_temp.assert(not has_table_privilege('authenticated','public.mc_admin_pin_sessions','insert'),'even a Supabase user cannot mint a PIN session');
+select pg_temp.assert(not has_table_privilege('authenticated','public.mc_admin_pin_sessions','delete'),'client cannot manage PIN session records');
 select pg_temp.assert(not has_table_privilege('authenticated','public.mc_repairs','update'),'client cannot mutate repairs');
 select pg_temp.assert(not has_function_privilege('authenticated','public.mc_create_order(jsonb,jsonb,text,jsonb,uuid,text,text,uuid,text,text,integer)','execute'),'order RPC service only');
 select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000002',true);

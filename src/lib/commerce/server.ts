@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
+import { adminCookieName, readAdminSession, sessionHash } from "./admin-session";
 import { hasShippingMeasurements } from "./measurements";
 import { preparedCatalog } from "./prepared-catalog";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
@@ -55,6 +56,14 @@ export async function requireAdmin() {
   const role = await client.rpc("is_admin");
   if (role.error || role.data !== true)
     throw new StoreError("Acesso não autorizado.", 403);
+  const store = await cookies();
+  const proof = readAdminSession(store.get(adminCookieName())?.value, data.user.id);
+  if (!proof || data.user.id !== process.env.MCELL_ADMIN_USER_ID)
+    throw new StoreError("Entre com a senha do painel.", 401);
+  const stamp = await database().from("mc_admin_pin_sessions").select("nonce_hash")
+    .eq("nonce_hash", sessionHash(proof.nonce)).eq("user_id", data.user.id)
+    .gt("expires_at", new Date().toISOString()).maybeSingle();
+  if (stamp.error || !stamp.data) throw new StoreError("A sessão do painel expirou. Entre novamente.", 401);
   return client;
 }
 async function preparedView(): Promise<Catalog> {

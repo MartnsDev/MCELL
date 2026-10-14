@@ -5,6 +5,7 @@ import { Header, Footer } from "@/components/commerce/shell";
 import "./globals.css";
 import "./storefront.css";
 import "./refinement.css";
+import "./admin.css";
 const storefrontFont = localFont({ src: "../../public/fonts/inter-variable.ttf", variable: "--font-storefront", display: "swap", weight: "100 900" });
 const signatureFont = localFont({ src: "../../public/fonts/caveat-variable.ttf", variable: "--font-signature", display: "swap", weight: "400 700" });
 export const dynamic = "force-dynamic";
