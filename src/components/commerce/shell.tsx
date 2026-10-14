@@ -5,8 +5,8 @@ import { CartLink } from "./cart-link";
 
 export function Brand({ footer = false }: { footer?: boolean }) {
   return <Link className={`logo ${footer ? "logo-footer" : ""}`} href="/" aria-label="M'Cell início">
-    <svg className="logo-image" viewBox="130 465 1010 340" aria-hidden="true">
-      <image href="/logo-mcell-completo.png" width="1254" height="1254" />
+    <svg className="logo-image" viewBox="0 0 1010 340" aria-hidden="true">
+      <image href="/brand/logo-mcell-optimized.webp" width="1010" height="340" />
     </svg>
   </Link>;
 }
