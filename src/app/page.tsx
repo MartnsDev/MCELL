@@ -1,10 +1,13 @@
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronRight, ClipboardList, BadgeDollarSign, Settings2, Package } from "lucide-react";
 import { catalog } from "@/lib/commerce/server";
 import { Benefits, BudgetLink, HeroBenefits } from "@/components/commerce/shell";
 import { StorefrontProduct } from "@/components/commerce/storefront-products";
 import { emptySettings } from "@/lib/commerce/types";
+const heroImage = { alt: "Técnico de luvas pretas consertando um celular em uma bancada de assistência", fill: true, loading: "eager" as const, fetchPriority: "high" as const };
+const { props: desktopHero } = getImageProps({ ...heroImage, src: "/brand/repair-black-gloves-desktop.webp", sizes: "(max-width:1320px) 100vw, 1320px" });
+const { props: mobileHero } = getImageProps({ ...heroImage, src: "/brand/repair-black-gloves-mobile.webp", sizes: "(max-width:640px) 100vw, 640px" });
 const categoryTiles = [
   ["Capinhas", "capinhas"], ["Películas", "peliculas"], ["Cabos", "cabos"], ["Carregadores", "carregadores"],
   ["Fones", "fones"], ["Suportes", "suportes"], ["Smartwatch", "smartwatch"], ["Consertos", "consertos"],
@@ -20,7 +23,11 @@ export default async function Home() {
   const serviceText = s.service_text === "Conte o que aconteceu com seu aparelho. Acompanhe o diagnóstico e aprove o orçamento antes do reparo." ? emptySettings.service_text : s.service_text;
   return <main className="storefront-home">
     <section className="container reference-hero repair-hero">
-      <Image src="/brand/repair-natural-mcell.webp" fill loading="eager" fetchPriority="high" sizes="(max-width:1320px) 100vw, 1320px" className="reference-hero-background" alt="Técnico trabalhando no conserto de um celular" />
+      <picture className="repair-hero-picture">
+        <source media="(max-width:640px)" srcSet={mobileHero.srcSet} sizes={mobileHero.sizes} />
+        {/* Art-directed sources load only the image suited to the screen. */}
+        <img {...desktopHero} className="reference-hero-background" alt={heroImage.alt} />
+      </picture>
       <div className="reference-hero-copy"><p className="hero-eyebrow">CONSERTO DE CELULARES É A NOSSA ESPECIALIDADE <span /></p>
         <h1>{title === emptySettings.hero_title ? <>Seu celular em<br /><em>boas mãos.</em></> : title}</h1>
         <p className="hero-description">{heroText}</p>
@@ -38,7 +45,7 @@ export default async function Home() {
       <div className={`reference-products ${selection.length ? "" : "is-empty"}`}>{selection.map(p => <StorefrontProduct key={p.id} product={p} />)}{!selection.length && <div className="storefront-empty"><Package size={32} /><div><h3>{view.unavailable ? "Catálogo temporariamente indisponível" : "Novos produtos em breve"}</h3><p>{view.unavailable ? "Consulte o atendimento ou tente novamente em instantes." : "Estamos preparando o nosso catálogo para você."}</p></div></div>}</div><aside className="reference-budget-card"><BudgetLink /><p>Atendimento via WhatsApp<br />também disponível.</p></aside>
     </section>
     {s.home_show_service && <section className="container reference-service">
-      <div className="reference-service-photo"><Image src="/brand/repair-natural-mcell.webp" alt="Mãos de um técnico usando uma chave de precisão para consertar um celular em uma bancada" fill sizes="(max-width:700px) 100vw, 280px" /></div>
+      <div className="reference-service-photo"><Image src="/brand/repair-black-gloves-desktop.webp" alt="Técnico com luvas pretas usando uma chave de precisão para consertar um celular" fill sizes="(max-width:700px) 100vw, 280px" /></div>
       <div className="reference-service-copy"><p className="eyebrow">ASSISTÊNCIA TÉCNICA ESPECIALIZADA</p><h2>{serviceTitle}</h2><p>{serviceText}</p></div>
       <div className="reference-service-steps">{[{ icon: ClipboardList, title: "Envie o problema", text: "Conte o que aconteceu com o seu aparelho." }, { icon: BadgeDollarSign, title: "Receba o orçamento", text: "Avaliamos e te enviamos o valor rapidamente." }, { icon: Settings2, title: "Acompanhe o conserto", text: "Fique por dentro do status do seu aparelho." }].map(({ icon: Icon, title, text }, i) => <div key={title} className="service-step"><div className="service-step-icon"><b>{i + 1}</b><Icon size={29} /></div><span><strong>{title}</strong><small>{text}</small></span>{i < 2 && <ArrowRight className="step-arrow" size={26} />}</div>)}</div>
       <BudgetLink />
