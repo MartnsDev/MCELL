@@ -29,12 +29,6 @@ export default async function Home() {
       </div>
 
     </section>
-    {s.home_show_service && <section className="container reference-service">
-      <div className="reference-service-photo"><Image src="/brand/repair-natural-mcell.webp" alt="Mãos de um técnico usando uma chave de precisão para consertar um celular em uma bancada" fill sizes="(max-width:700px) 100vw, 280px" /></div>
-      <div className="reference-service-copy"><p className="eyebrow">ASSISTÊNCIA TÉCNICA ESPECIALIZADA</p><h2>{serviceTitle}</h2><p>{serviceText}</p></div>
-      <div className="reference-service-steps">{[{ icon: ClipboardList, title: "Envie o problema", text: "Conte o que aconteceu com o seu aparelho." }, { icon: BadgeDollarSign, title: "Receba o orçamento", text: "Avaliamos e te enviamos o valor rapidamente." }, { icon: Settings2, title: "Acompanhe o conserto", text: "Fique por dentro do status do seu aparelho." }].map(({ icon: Icon, title, text }, i) => <div key={title} className="service-step"><div className="service-step-icon"><b>{i + 1}</b><Icon size={29} /></div><span><strong>{title}</strong><small>{text}</small></span>{i < 2 && <ArrowRight className="step-arrow" size={26} />}</div>)}</div>
-      <BudgetLink />
-    </section>}
     {s.home_show_categories && <nav className="container reference-categories" aria-label="Categorias de produtos">{categoryTiles.map(([name, slug], i) => {
       const registered = view.categories.find(c => c.active && (c.slug === slug || c.name.toLocaleLowerCase("pt-BR") === name.toLocaleLowerCase("pt-BR")));
       return <Link key={slug} href={slug === "consertos" ? "/assistencia" : `/catalogo?categoria=${registered?.slug ?? slug}`}><span className={`category-photo category-photo-${i}`} aria-hidden="true" /><span className="category-label">{name}<ChevronRight size={17} /></span></Link>;
@@ -43,6 +37,12 @@ export default async function Home() {
       <div className="reference-section-heading"><div><h2>{best.length && s.home_show_bestsellers ? "Mais vendidos" : "Acessórios para o seu celular"}</h2><p>{best.length && s.home_show_bestsellers ? "Os produtos que são sucesso entre os nossos clientes" : "Complete o cuidado com seu aparelho"}</p></div><Link href="/catalogo">Ver todos os produtos<ArrowRight size={16} /></Link></div>
       <div className={`reference-products ${selection.length ? "" : "is-empty"}`}>{selection.map(p => <StorefrontProduct key={p.id} product={p} />)}{!selection.length && <div className="storefront-empty"><Package size={32} /><div><h3>{view.unavailable ? "Catálogo temporariamente indisponível" : "Novos produtos em breve"}</h3><p>{view.unavailable ? "Consulte o atendimento ou tente novamente em instantes." : "Estamos preparando o nosso catálogo para você."}</p></div></div>}</div><aside className="reference-budget-card"><BudgetLink /><p>Atendimento via WhatsApp<br />também disponível.</p></aside>
     </section>
+    {s.home_show_service && <section className="container reference-service">
+      <div className="reference-service-photo"><Image src="/brand/repair-natural-mcell.webp" alt="Mãos de um técnico usando uma chave de precisão para consertar um celular em uma bancada" fill sizes="(max-width:700px) 100vw, 280px" /></div>
+      <div className="reference-service-copy"><p className="eyebrow">ASSISTÊNCIA TÉCNICA ESPECIALIZADA</p><h2>{serviceTitle}</h2><p>{serviceText}</p></div>
+      <div className="reference-service-steps">{[{ icon: ClipboardList, title: "Envie o problema", text: "Conte o que aconteceu com o seu aparelho." }, { icon: BadgeDollarSign, title: "Receba o orçamento", text: "Avaliamos e te enviamos o valor rapidamente." }, { icon: Settings2, title: "Acompanhe o conserto", text: "Fique por dentro do status do seu aparelho." }].map(({ icon: Icon, title, text }, i) => <div key={title} className="service-step"><div className="service-step-icon"><b>{i + 1}</b><Icon size={29} /></div><span><strong>{title}</strong><small>{text}</small></span>{i < 2 && <ArrowRight className="step-arrow" size={26} />}</div>)}</div>
+      <BudgetLink />
+    </section>}
     <Benefits settings={s} />
   </main>;
 }

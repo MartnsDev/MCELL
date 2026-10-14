@@ -199,7 +199,7 @@ body { background: #f7f9fc; }
  .repair-hero .hero-benefits { flex-wrap:wrap; gap:14px; }
 }
 @media(max-width:640px) {
- .storefront-home > .reference-service { order:2; }
+ .storefront-home > .reference-service { order:4; }
  .storefront-home > .reference-categories { order:3; }
- .storefront-home > .reference-products-section { order:4; }
+ .storefront-home > .reference-products-section { order:2; }
 }
