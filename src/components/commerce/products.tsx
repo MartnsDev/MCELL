@@ -37,11 +37,7 @@ export function ProductCard({ product: p }: { product: Product }) {
             <span>{pricedVariant?.promo_cents != null && <s className="reference-price">{money(pricedVariant.price_cents)}</s>}<strong>{price ? money(price) : "Indisponível"}</strong></span>
             <ArrowUpRight size={19} />
           </div>
-          <small>
-            {variants.length > 1
-              ? `${variants.length} versões · escolha a sua`
-              : "Ver detalhes"}
-          </small>
+          {variants.length > 1 && <small>{variants.length} versões · escolha a sua</small>}
         </div>
       </Link>
       <CardCartActions product={p} />

@@ -244,3 +244,71 @@ body { background: #f7f9fc; }
  .card-details-link { font-size:11px; }
  .product-card > .card-cart-actions { padding-inline:12px; }
 }
+.card-quantity { display:grid; gap:6px; }
+.card-quantity > span { font-size:11px; color:#5e7188; }
+.card-quantity-control { display:grid; grid-template-columns:40px minmax(0,1fr) 40px; border:1px solid #d9e3ef; border-radius:9px; overflow:hidden; background:#f9fbfe; }
+.card-quantity-control button { display:grid; place-items:center; min-width:0; min-height:44px; padding:0; border:0; border-radius:0; background:transparent; color:#174d83; }
+.card-quantity-control input { width:100%; min-width:0; height:44px; padding:0; border:0; border-inline:1px solid #e6edf5; border-radius:0; text-align:center; background:white; font-size:14px; appearance:textfield; }
+.card-quantity-control input::-webkit-inner-spin-button,.card-quantity-control input::-webkit-outer-spin-button { appearance:none; margin:0; }
+.whatsapp-cart { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:28px; align-items:start; }
+.whatsapp-cart .panel { padding:28px; border-radius:20px; border:1px solid #e0e8f2; background:white; }
+.whatsapp-cart-summary { position:sticky; top:24px; }
+.whatsapp-section-title { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+.cart-step { display:grid; place-items:center; flex-shrink:0; width:36px; height:36px; border-radius:11px; background:#edf5ff; color:#1767b8; font-size:16px; font-weight:700; }
+.whatsapp-section-title h2 { font-size:21px; line-height:1.3; }
+.whatsapp-section-title p { font-size:12px; line-height:1.5; margin-top:4px; }
+.whatsapp-cart-row { display:flex; align-items:flex-start; gap:16px; padding:20px 0; border-top:1px solid #e9eef5; }
+.whatsapp-cart-photo { position:relative; width:80px; height:96px; flex-shrink:0; border-radius:10px; background:#f6f9fc; overflow:hidden; }
+.whatsapp-cart-photo img { object-fit:contain; padding:8px; }
+.whatsapp-cart-copy { flex:1; min-width:0; }
+.whatsapp-cart-copy h3 { font-size:14px; line-height:1.5; overflow-wrap:anywhere; }
+.whatsapp-cart-copy p { font-size:12px; margin-block:5px; }
+.whatsapp-cart-copy > strong { font-size:17px; color:#174e86; }
+.whatsapp-cart-row-actions { display:flex; align-items:end; gap:18px; margin-top:12px; }
+.whatsapp-cart-row-actions label { display:grid; gap:5px; font-size:11px; }
+.whatsapp-cart-row-actions input { width:74px; min-height:44px; padding:8px; font-size:14px; }
+.cart-remove { display:flex; align-items:center; gap:5px; padding:10px 0; min-height:44px; background:transparent; color:#7b4c54; font-size:11px; }
+.whatsapp-cart-total,.whatsapp-cart-freight { display:flex; justify-content:space-between; align-items:center; gap:12px; padding-top:16px; font-size:13px; }
+.whatsapp-cart-total { border-top:1px solid #e1eaf3; }
+.whatsapp-cart-total strong { font-size:25px; white-space:nowrap; }
+.whatsapp-cart-freight { color:#60748e; padding-top:10px; }
+.whatsapp-cart-note { font-size:12px; line-height:1.7; background:#f2f7fd; border-radius:10px; padding:14px; margin-block:20px; }
+.whatsapp-cart .text-link { display:flex; align-items:center; gap:6px; font-size:12px; }
+.whatsapp-cart-form fieldset { border:0; padding:0; min-width:0; }
+.customer-kind { display:flex; gap:20px; margin-bottom:20px; }
+.customer-kind legend { font-size:12px; margin-bottom:12px; }
+.customer-kind label { display:flex; align-items:center; gap:7px; font-size:13px; }
+.customer-kind input { width:16px; height:16px; }
+.whatsapp-fields { display:grid; gap:16px; }
+.whatsapp-fields label { display:grid; gap:7px; font-size:12px; font-weight:550; min-width:0; }
+.whatsapp-fields label small { font-weight:400; color:#7f8fa2; }
+.whatsapp-fields input { width:100%; min-width:0; min-height:46px; font-size:14px; padding:11px 12px; border-radius:9px; background:#fcfdff; }
+.whatsapp-address-title { display:flex; align-items:center; gap:8px; margin-top:10px; color:#305f91; }
+.whatsapp-address-title h3 { font-size:15px; }
+.postcode-field > label { margin-bottom:7px; }
+.postcode-input { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; }
+.postcode-input button { min-height:46px; font-size:11px; padding:10px 12px; border-radius:9px; }
+.postcode-status { font-size:11px; line-height:1.6; margin-top:-6px; }
+.whatsapp-field-pair { display:grid; grid-template-columns:.7fr 1.3fr; gap:12px; }
+.whatsapp-field-pair.city-state { grid-template-columns:minmax(0,1fr) 74px; }
+.whatsapp-privacy { font-size:11px; line-height:1.7; margin-block:22px 16px; color:#6d7e94; }
+.whatsapp-privacy a { text-decoration:underline; }
+.whatsapp-order-button { display:flex; justify-content:center; align-items:center; gap:9px; width:100%; min-height:50px; padding:13px 16px; font-size:13px; line-height:1.5; border-radius:10px; background:#098b46; color:white; }
+.whatsapp-cart-form .notice { font-size:12px; line-height:1.7; margin-top:16px; }
+.empty-cart p { margin-block:14px 22px; }
+@media(max-width:800px) {
+ .whatsapp-cart { grid-template-columns:minmax(0,1fr); gap:20px; }
+ .whatsapp-cart-summary { position:static; }
+}
+@media(max-width:640px) {
+ .whatsapp-cart .panel { padding:22px 18px; border-radius:16px; }
+ .whatsapp-section-title h2 { font-size:19px; }
+ .whatsapp-cart-row { gap:12px; }
+ .whatsapp-cart-photo { width:64px; height:80px; }
+ .whatsapp-cart-copy h3 { font-size:13px; }
+ .whatsapp-cart-total { font-size:12px; }
+ .whatsapp-cart-total strong { font-size:23px; }
+ .whatsapp-fields input { font-size:16px; }
+ .whatsapp-order-button { font-size:12px; padding-inline:10px; }
+ .card-quantity > span { font-size:10px; }
+}

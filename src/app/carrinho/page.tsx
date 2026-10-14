@@ -1,7 +1,7 @@
 import { catalog } from "@/lib/commerce/server";
-import { Checkout } from "@/components/commerce/checkout";
+import { WhatsAppCheckout } from "@/components/commerce/whatsapp-checkout";
 export const metadata = {
-  title: "Carrinho e checkout",
+  title: "Carrinho e pedido pelo WhatsApp",
   robots: { index: false },
 };
 export default async function Page() {
@@ -9,7 +9,7 @@ export default async function Page() {
     <main className="container section">
       <p className="eyebrow">SUA SELEÇÃO</p>
       <h1 style={{ marginBottom: 30 }}>Carrinho de compras</h1>
-      <Checkout view={await catalog()} />
+      <WhatsAppCheckout view={await catalog()} />
     </main>
   );
 }

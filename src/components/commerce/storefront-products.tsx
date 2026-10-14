@@ -20,7 +20,7 @@ export function StorefrontProduct({ product: p }: { product: Product }) {
       <small className="product-availability">{available.length ? "Disponível em estoque" : "Esgotado"}</small>
       {pricedVariant?.promo_cents != null && <s className="reference-price">{money(pricedVariant.price_cents)}</s>}
       <strong className="storefront-price">{price ? money(price) : "Indisponível"}</strong>
-      <small>{variants.length > 1 ? "Escolha o modelo do seu aparelho" : p.catalog_only ? "Conheça os detalhes do produto" : "Consulte as condições no checkout"}</small>
+      <small>{variants.length > 1 ? "Escolha o modelo do seu aparelho" : "Peça pelo WhatsApp"}</small>
       <CardCartActions product={p} />
     </div>
   </article>;

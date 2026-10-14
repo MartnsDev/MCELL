@@ -1,3 +1,4 @@
+import { prepareWhatsAppOrder } from "@/lib/commerce/whatsapp-order";
 import { randomUUID } from "node:crypto";
 import {
   body,
@@ -30,6 +31,30 @@ export async function POST(
     const { action } = await params;
     const db = await guard(request, action);
     const raw = await body(request);
+    if (action === "whatsapp-order") {
+      const view = await catalog();
+      if (view.unavailable || !/^\d{10,15}$/.test(view.settings.whatsapp))
+        throw new StoreError(view.unavailable ? "O catálogo está indisponível. Tente novamente." : "O WhatsApp da loja ainda não está configurado.", 503);
+      try { return ok(prepareWhatsAppOrder(raw, view)); }
+      catch (error) {
+        if (error instanceof Error && error.name !== "ZodError")
+          throw new StoreError(error.message, view.unavailable ? 503 : 409);
+        throw error;
+      }
+    }
+    if (action === "postcode") {
+      const { cep } = quoteSchema.pick({ cep: true }).parse(raw);
+      try {
+        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`, { signal: AbortSignal.timeout(6000), cache: "no-store" });
+        if (!response.ok) throw new Error("lookup failed");
+        const address = await response.json();
+        if (address.erro) throw new StoreError("CEP não encontrado. Confira os números ou preencha o endereço manualmente.", 404);
+        return ok({ street: String(address.logradouro ?? ""), district: String(address.bairro ?? ""), city: String(address.localidade ?? ""), state: String(address.uf ?? "") });
+      } catch (error) {
+        if (error instanceof StoreError) throw error;
+        throw new StoreError("Não foi possível buscar o CEP. Você pode preencher o endereço manualmente.", 503);
+      }
+    }
     if (action === "quote") {
       const input = quoteSchema.parse(raw);
       const view = await catalog();
