@@ -2,7 +2,7 @@ import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 const m=vi.hoisted(()=>({ guard:vi.fn(),rpc:vi.fn(),membership:vi.fn(),owner:vi.fn(),link:vi.fn(),verify:vi.fn(),role:vi.fn(),signOut:vi.fn() }));
 vi.mock("@/lib/commerce/server",()=>{
   class StoreError extends Error { constructor(message:string,public status=400){super(message);} }
-  return {StoreError,body:(r:Request)=>r.json(),hash:(s:string)=>s,guard:m.guard,sessionClient:async()=>({auth:{verifyOtp:m.verify,signOut:m.signOut},rpc:m.role}),failure:(e:Error & {status?:number})=>Response.json({error:e.message},{status:e.status??500}),};
+  return {StoreError,body:async(r:Request)=>r.headers.get("content-type")?.startsWith("application/x-www-form-urlencoded") ? Object.fromEntries(new URLSearchParams(await r.text())) : r.json(),hash:(s:string)=>s,guard:m.guard,sessionClient:async()=>({auth:{verifyOtp:m.verify,signOut:m.signOut},rpc:m.role}),failure:(e:Error & {status?:number})=>Response.json({error:e.message},{status:e.status??500}),};
 });
 import {POST} from "@/app/api/adm/1031825277/route";
 import {validAdminPin} from "./admin-pin";
@@ -45,6 +45,14 @@ describe("manual admin login",()=>{
  });
  it("returns no token, password or owner information on successful login",async()=>{
   const r=await POST(request());expect(r.status).toBe(200);expect(await r.json()).toEqual({next:"/adm/1031825277"});expect(m.verify).toHaveBeenCalledWith({token_hash:"internal-only-token",type:"email"});
+ });
+ it("handles a native POST form without placing the PIN in the redirect URL",async()=>{
+  const r=await POST(new Request("https://mcell.example/api/adm/1031825277",{method:"POST",headers:{origin:"https://mcell.example","Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({pin:secret})}));
+  expect(r.status).toBe(303);expect(r.headers.get("location")).toBe("/adm/1031825277");
+ });
+ it("redirects a rejected native form with only a fixed error code",async()=>{
+  const r=await POST(new Request("https://mcell.example/api/adm/1031825277",{method:"POST",headers:{origin:"https://mcell.example","Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({pin:"wrong"})}));
+  expect(r.status).toBe(303);expect(r.headers.get("location")).toBe("/adm/1031825277?error=login");
  });
  it("allows same-origin logout without privileged database access",async()=>{
   expect((await POST(request({action:"logout"}))).status).toBe(200);expect(m.signOut).toHaveBeenCalledWith({scope:"local"});expect(m.guard).not.toHaveBeenCalled();

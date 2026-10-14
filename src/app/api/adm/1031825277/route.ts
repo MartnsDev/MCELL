@@ -2,15 +2,19 @@ import { body, failure, guard, hash, sessionClient, StoreError } from "@/lib/com
 import { validAdminPin } from "@/lib/commerce/admin-pin";
 
 export async function POST(request: Request) {
+  const nativeForm = request.headers.get("content-type")?.startsWith("application/x-www-form-urlencoded");
+  const success = () => nativeForm
+    ? new Response(null, { status: 303, headers: { Location: "/adm/1031825277", "Cache-Control": "no-store" } })
+    : Response.json({ next: "/adm/1031825277" }, { headers: { "Cache-Control": "no-store" } });
   try {
     if (request.headers.get("origin") !== new URL(request.url).origin)
       throw new StoreError("Origem inválida.", 403);
-    const raw = await body(request);
+    const raw = await body(request, true);
     if (raw.action === "logout") {
       const client = await sessionClient();
       const result = await client.auth.signOut({ scope: "local" });
       if (result.error) throw new StoreError("Não foi possível encerrar a sessão.", 503);
-      return Response.json({ next: "/adm/1031825277" }, { headers: { "Cache-Control": "no-store" } });
+      return success();
     }
     if (!process.env.MCELL_ADMIN_PIN || !process.env.MCELL_ADMIN_USER_ID)
       throw new StoreError("O acesso administrativo precisa ser ativado na configuração da loja.", 503);
@@ -42,6 +46,12 @@ export async function POST(request: Request) {
     }
     // Tokens stay in the existing Supabase cookie session. All admin APIs still
     // require getUser + is_admin and execute mutations as the authenticated owner.
-    return Response.json({ next: "/adm/1031825277" }, { headers: { "Cache-Control": "no-store" } });
-  } catch (error) { return failure(error); }
+    return success();
+  } catch (error) {
+    if (nativeForm) {
+      const code = error instanceof StoreError && error.status === 429 ? "limit" : "login";
+      return new Response(null, { status: 303, headers: { Location: `/adm/1031825277?error=${code}`, "Cache-Control": "no-store" } });
+    }
+    return failure(error);
+  }
 }

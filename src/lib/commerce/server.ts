@@ -113,7 +113,7 @@ export async function guard(request: Request, scope: string, max = 15) {
     throw new StoreError("Muitas solicitações. Aguarde alguns minutos.", 429);
   return db;
 }
-export async function body(request: Request) {
+export async function body(request: Request, allowForm = false) {
   const reader = request.body?.getReader();
   if (!reader) throw new StoreError("Solicitação vazia.");
   const chunks: Uint8Array[] = [];
@@ -129,7 +129,10 @@ export async function body(request: Request) {
     chunks.push(value);
   }
   try {
-    return JSON.parse(Buffer.concat(chunks).toString("utf8"));
+    const text = Buffer.concat(chunks).toString("utf8");
+    if (allowForm && request.headers.get("content-type")?.startsWith("application/x-www-form-urlencoded"))
+      return Object.fromEntries(new URLSearchParams(text));
+    return JSON.parse(text);
   } catch {
     throw new StoreError("JSON inválido.");
   }

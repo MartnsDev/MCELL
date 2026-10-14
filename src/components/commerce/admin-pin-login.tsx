@@ -1,17 +1,15 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { LockKeyhole, LogOut } from "lucide-react";
 import { api } from "./api";
 const endpoint = "/api/adm/1031825277";
-export function AdminPinLogin({ configured }: { configured: boolean }) {
-  const router = useRouter();
+export function AdminPinLogin({ configured, initialMessage = "" }: { configured: boolean; initialMessage?: string }) {
   const [pin, setPin] = useState("");
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState("");
-  return <form className="panel admin-pin-login" onSubmit={async e => {
+  const [message, setMessage] = useState(initialMessage);
+  return <form method="post" action={endpoint} className="panel admin-pin-login" onSubmit={async e => {
     e.preventDefault(); setBusy(true); setMessage("");
-    try { await api(endpoint, { pin }); setPin(""); router.refresh(); }
+    try { await api(endpoint, { pin }); setPin(""); window.location.replace("/adm/1031825277"); }
     catch (error) { setMessage((error as Error).message); }
     finally { setBusy(false); }
   }}>
@@ -25,12 +23,11 @@ export function AdminPinLogin({ configured }: { configured: boolean }) {
   </form>;
 }
 export function AdminLogout() {
-  const router = useRouter();
   const [busy,setBusy]=useState(false);
   const [message,setMessage]=useState("");
   return <div><button className="secondary" disabled={busy} onClick={async()=>{
     setBusy(true);setMessage("");
-    try {await api(endpoint,{action:"logout"});router.replace("/adm/1031825277");router.refresh();}
+    try {await api(endpoint,{action:"logout"});window.location.replace("/adm/1031825277");}
     catch(error){setMessage((error as Error).message);setBusy(false);}
   }}><LogOut size={16} /> Sair do painel</button>{message && <p role="alert">{message}</p>}</div>;
 }

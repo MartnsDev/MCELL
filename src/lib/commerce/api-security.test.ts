@@ -130,3 +130,10 @@ describe("quick stock authorization", () => {
     expect(response.status).toBe(401);
   });
 });
+
+
+it("reads bounded URL-encoded admin login bodies only when explicitly enabled", async () => {
+  const request = () => new Request("https://shop.example/login", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "pin=test-only" });
+  await expect(body(request(), true)).resolves.toEqual({ pin: "test-only" });
+  await expect(body(request())).rejects.toThrow("JSON inválido");
+});
