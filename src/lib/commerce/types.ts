@@ -134,8 +134,8 @@ export const emptySettings: Settings = {
   service_title: "Conserto de celulares com agilidade e confiança.",
   service_text:
     "Seu celular apresentou algum problema? A gente resolve! Contamos com técnicos especializados e peças de qualidade.",
-  hero_title: "Acessórios, eletrônicos e assistência técnica em um só lugar.",
-  hero_text: "Qualidade, variedade e o melhor atendimento para o seu dia a dia.",
+  hero_title: "Seu celular em boas mãos.",
+  hero_text: "Conte o problema do seu aparelho, solicite um orçamento e acompanhe cada etapa do conserto.",
   about: "",
   delivery_policy: "",
   privacy_policy: "",

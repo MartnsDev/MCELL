@@ -57,7 +57,7 @@ export function Footer({ settings }: { settings: Settings }) {
 }
 export function HeroBenefits() {
   return <div className="hero-benefits">
-    <div><ShieldCheck /><span>Produtos originais<br />e de qualidade</span></div><div><Truck /><span>Entrega para todo o Brasil<br />com rastreamento</span></div><div><CreditCard /><span>Pagamento seguro<br />no checkout</span></div><div><Heart /><span>Atendimento especializado<br />antes e depois da compra</span></div>
+    <div><Wrench /><span>Diagnóstico<br />e orçamento</span></div><div><ShieldCheck /><span>Reparo após<br />sua aprovação</span></div><div><Phone /><span>Acompanhe o status<br />do seu conserto</span></div>
   </div>;
 }
 export function BudgetLink({ className = "" }: { className?: string }) { return <Link className={`button budget-button ${className}`} href="/assistencia"><Wrench size={18} />Solicitar orçamento<ArrowRight size={15} /></Link>; }

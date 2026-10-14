@@ -177,3 +177,29 @@ body { background: #f7f9fc; }
 .stock-editor label { display: grid; gap: 5px; font-size: 12px; }
 .stock-editor input { width: 110px; min-height: 44px; }
 .stock-editor button { min-height: 44px; font-size: 12px; }
+
+/* Repair is the main service; accessories complement it. */
+.repair-hero { height:400px; margin-bottom:28px; }
+.repair-hero .reference-hero-background { object-fit:cover; object-position:75% center; }
+.repair-hero::after { background:linear-gradient(90deg,#031c35 5%,#031c35ef 35%,#031c3570 67%,#031c3520); }
+.repair-hero .reference-hero-copy { max-width:630px; padding-top:38px; }
+.repair-hero h1 { font-size:clamp(38px,4vw,56px); }
+.repair-hero .hero-description { max-width:420px; }
+.repair-hero .hero-actions .budget-button { background:#087afa; border-color:#2991ff; }
+.repair-hero .hero-actions > a:last-child { background:#ffffff0d; border:1px solid #85b9e0; }
+@media(max-width:640px) {
+ .repair-hero { height:auto; min-height:560px; }
+ .repair-hero .reference-hero-background { object-fit:cover; object-position:65% center; }
+ .repair-hero::after { background:linear-gradient(180deg,#031c35fa 10%,#031c35e8 55%,#031c3540); }
+ .repair-hero .reference-hero-copy { padding:30px 22px 180px; }
+ .repair-hero h1 { font-size:40px; }
+ .repair-hero .hero-eyebrow { font-size:8px; letter-spacing:.12em; line-height:1.6; }
+ .repair-hero .hero-actions { flex-direction:column; }
+ .repair-hero .hero-actions .button { width:100%; }
+ .repair-hero .hero-benefits { flex-wrap:wrap; gap:14px; }
+}
+@media(max-width:640px) {
+ .storefront-home > .reference-service { order:2; }
+ .storefront-home > .reference-categories { order:3; }
+ .storefront-home > .reference-products-section { order:4; }
+}

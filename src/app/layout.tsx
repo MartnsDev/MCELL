@@ -11,11 +11,11 @@ const signatureFont = localFont({ src: "../../public/fonts/caveat-variable.ttf",
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: {
-    default: "M'Cell | Tecnologia e assistência técnica",
+    default: "M'Cell | Conserto de celulares",
     template: "%s | M'Cell",
   },
   description:
-    "Acessórios de celular, eletrônicos e assistência técnica. Escolha modelos compatíveis, consulte entrega e solicite seu orçamento.",
+    "Conserto de celulares e assistência técnica na M’Cell. Solicite um orçamento, aprove o reparo e acompanhe seu aparelho. Acessórios para complementar o cuidado.",
   icons: { icon: [{ url: "/brand/favicon-mcell.svg", type: "image/svg+xml" }], apple: "/logo-mcell.png" },
 };
 export default async function Layout({
